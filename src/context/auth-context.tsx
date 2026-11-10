@@ -13,12 +13,15 @@ type AuthContextValue = {
   updateDisplayName: (name: string) => Promise<void>;
 };
 
+// Global auth state for the entire app
 export const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: PropsWithChildren) {
   const [user, setUser] = useState<AppUser | null>(null);
+  // If Firebase is configured, wait for existing session check (loading = true)
   const [loading, setLoading] = useState(isFirebaseConfigured);
 
+  // Subscribe to auth state on app start (auto sign-in if token exists)
   useEffect(() => {
     if (!isFirebaseConfigured || !firebaseAuth) {
       return;
@@ -29,6 +32,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
   }, []);
 
+  // Memoize actions & state to avoid unnecessary re-renders
   const value = useMemo<AuthContextValue>(() => ({
     user,
     loading,

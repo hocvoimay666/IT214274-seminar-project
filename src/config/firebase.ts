@@ -3,6 +3,7 @@ import { getAuth, getReactNativePersistence, initializeAuth } from 'firebase/aut
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
+// Extract Firebase's APIs key from .env
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
@@ -11,11 +12,25 @@ const firebaseConfig = {
   messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
-
+// Check your app config. Does it have 3 necessary key, yet?
 export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
 export const firebaseApp = isFirebaseConfigured
   ? getApps().length ? getApp() : initializeApp(firebaseConfig)
   : null;
+//   Or, you can also write like that
+//   let firebaseApp;
+//   if (!isFirebaseConfigured) {
+//     app == null;
+//   }
+//   if (getApps().length > 0) {
+//     // That existed, reuse available
+//     app == getApp();
+//   } else {
+//     // Doesn't have? Initialize a new app
+//     app == initializeApp(firebaseConfig);
+//   }
+
+// Using mobile platform for auth -> Create
 function createAuth() {
   if (!firebaseApp) return null;
   if (Platform.OS === 'web') return getAuth(firebaseApp);
