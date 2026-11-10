@@ -1,12 +1,29 @@
-export type VocabularyWord = { word: string; pronunciation: string; meaning: string; example: string };
-export type QuizQuestion = { id: string; prompt: string; options: string[]; answer: string };
+import type { QuizQuestion } from '@/types/quiz';
+
+export type VocabularyWord = {
+  word: string;
+  pronunciation: string;
+  meaning: string;
+  example: string;
+  image?: string;
+};
+
+export type GrammarItem = {
+  title: string;
+  explanation: string;
+  example: string;
+};
+
 export type Lesson = {
   id: string;
   title: string;
   level: string;
   description: string;
   vocabulary: VocabularyWord[];
+  grammar?: GrammarItem[];
   questions: QuizQuestion[];
 };
 
-export type LearningProgress = { completedLessonIds: string[]; completedQuizzes: number; correctAnswers: number };
+// Re-export types for backward compatibility
+export type { QuizQuestion } from '@/types/quiz';
+export type { LearningProgress } from '@/types/statistic';

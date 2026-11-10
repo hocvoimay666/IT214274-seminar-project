@@ -13,7 +13,37 @@ export default function LessonScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const lesson = getLesson(id);
   const [done, setDone] = useState(false);
-  useEffect(() => { void getProgress().then((progress) => setDone(progress.completedLessonIds.includes(id))); }, [id]);
-  if (!lesson) return <Screen><ThemedText type="title">Lesson not found</ThemedText><Link href="/(main)">Back to lessons</Link></Screen>;
-  return <Screen><ThemedText type="title">{lesson.title}</ThemedText><Text>{lesson.description}</Text><ThemedText type="subtitle">Vocabulary</ThemedText>{lesson.vocabulary.map((item) => <VocabularyCard key={item.word} word={item} />)}<AppButton title={done ? 'Lesson completed' : 'Mark lesson complete'} disabled={done} onPress={() => { void markLessonComplete(lesson.id).then(() => setDone(true)); }} /></Screen>;
+
+  useEffect(() => {
+    void getProgress().then((progress) => setDone(progress.completedLessonIds.includes(id)));
+  }, [id]);
+
+  if (!lesson) {
+    return (
+      <Screen>
+        <ThemedText type="title">Lesson not found</ThemedText>
+        <Link href="/(main)">Back to lessons</Link>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen>
+      <ThemedText type="title">{lesson.title}</ThemedText>
+      <Text>{lesson.description}</Text>
+
+      <ThemedText type="subtitle">Vocabulary</ThemedText>
+      {lesson.vocabulary.map((item) => (
+        <VocabularyCard key={item.word} word={item} />
+      ))}
+
+      <AppButton
+        title={done ? 'Lesson completed' : 'Mark lesson complete'}
+        disabled={done}
+        onPress={() => {
+          void markLessonComplete(lesson.id).then(() => setDone(true));
+        }}
+      />
+    </Screen>
+  );
 }

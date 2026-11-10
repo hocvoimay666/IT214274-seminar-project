@@ -106,14 +106,14 @@ npx expo start
 - Connect ADB to Waydroid:
 
 ```bash
-WAYDROID_IP=$(sudo waydroid shell ip route \vert{} grep src \vert{} awk '{print$NF}')
+WAYDROID_IP=$(sudo waydroid shell ip route | grep src | awk '{print$NF}')
 adb connect $WAYDROID_IP:5555
 ```
 
 - Fix ADB Permission (If unauthenticated):
 
 ```bash
-cat ~/.android/adbkey.pub | sudo waydroid shell "cat >> /data/misc/adb/adb_keys"
+cat ~/.android/adbkey.pub | sudo waydroid shell -- sh -c 'cat >> /data/misc/adb/adb_keys'
 adb kill-server
 adb connect $WAYDROID_IP:5555
 ```
