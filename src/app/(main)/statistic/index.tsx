@@ -19,7 +19,7 @@ export default function StatisticScreen() {
 
   return (
     <Screen>
-      <ThemedText type="title">Your progress</ThemedText>
+      <ThemedText type="title" style={{ marginTop: 15 }}>Your progress</ThemedText>
 
       <ProgressChart completed={progress.completedLessonIds.length} total={2} />
 

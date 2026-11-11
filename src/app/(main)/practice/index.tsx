@@ -23,8 +23,11 @@ export default function PracticeScreen() {
 
   return (
     <Screen>
-      <ThemedText type="title">Quick practice</ThemedText>
-      <Text>Choose the best answer.</Text>
+      <ThemedText type="title" style={{ marginTop: 15 }}>Quick practice</ThemedText>
+      <ThemedText type="default" themeColor="muted">
+        Choose the best answer.
+      </ThemedText>
+
 
       <MultipleChoice question={question} selected={selected} onSelect={setSelected} />
 

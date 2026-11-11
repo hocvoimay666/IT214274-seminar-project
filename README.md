@@ -106,6 +106,12 @@ npx expo start
 - Connect ADB to Waydroid:
 
 ```bash
+waydroid status
+adb connect <waydroid-ip-u-saw>:5555
+```
+- Or:
+
+```bash
 WAYDROID_IP=$(sudo waydroid shell ip route | grep src | awk '{print$NF}')
 adb connect $WAYDROID_IP:5555
 ```

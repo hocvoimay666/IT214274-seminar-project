@@ -29,7 +29,7 @@ export default function LessonScreen() {
 
   return (
     <Screen>
-      <ThemedText type="title">{lesson.title}</ThemedText>
+      <ThemedText type="title" style={{ marginTop: 12}}>{lesson.title}</ThemedText>
       <Text>{lesson.description}</Text>
 
       <ThemedText type="subtitle">Vocabulary</ThemedText>

@@ -14,6 +14,8 @@ const firebaseConfig = {
 };
 // Check your app config. Does it have 3 necessary key, yet?
 export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.appId);
+// Session Persistence / Remember Login
+// Saving device's auth token
 export const firebaseApp = isFirebaseConfigured
   ? getApps().length ? getApp() : initializeApp(firebaseConfig)
   : null;

@@ -1,12 +1,45 @@
 import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function AppTabs() {
   return (
     <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: '#3568D4' }}>
-      <Tabs.Screen name="index" options={{ title: 'Learn' }} />
-      <Tabs.Screen name="practice/index" options={{ title: 'Practice' }} />
-      <Tabs.Screen name="statistic/index" options={{ title: 'Progress' }} />
-      <Tabs.Screen name="profile/index" options={{ title: 'Profile' }} />
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: 'Learn',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book-outline" size={size} color={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="practice/index"
+        options={{
+          title: 'Practice',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="create-outline" size={size} color={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="statistic/index"
+        options={{
+          title: 'Progress',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="stats-chart-outline" size={size} color={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profile/index"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color as string} />
+          ),
+        }}
+      />
       <Tabs.Screen name="learn/[id]" options={{ href: null }} />
       <Tabs.Screen name="profile/edit" options={{ href: null }} />
     </Tabs>
