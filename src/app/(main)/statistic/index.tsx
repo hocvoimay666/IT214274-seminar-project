@@ -9,14 +9,15 @@ import { ThemedText } from '@/components/ui/themed-text';
 import { getProgress } from '@/services/storage-service';
 import type { LearningProgress } from '@/types/statistic';
 
-const EMPTY: LearningProgress = { 
-  completedLessonIds: [], 
-  completedQuizzes: 0, 
+const EMPTY: LearningProgress = {
+  completedLessonIds: [],
+  completedQuizzes: 0,
   correctAnswers: 0,
   totalQuestions: 0,
   averageScore: 0,
   quizHistory: [],
-  wrongAnswers: []
+  wrongAnswers: [],
+  streakDays: 0
 };
 
 export default function StatisticScreen() {

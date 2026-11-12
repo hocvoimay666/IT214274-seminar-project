@@ -10,7 +10,8 @@ const EMPTY_PROGRESS: LearningProgress = {
   totalQuestions: 0,
   averageScore: 0,
   quizHistory: [],
-  wrongAnswers: []
+  wrongAnswers: [],
+  streakDays: 0,
 };
 
 // Read progress from device storage
@@ -29,12 +30,30 @@ export async function getProgress(): Promise<LearningProgress> {
 export async function saveProgress(progress: LearningProgress) {
   await AsyncStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progress));
 }
+// Update streak based on today's date vs last active date (mutates progress in-place)
+function updateStreakInProgress(progress: LearningProgress) {
+  const today = new Date().toISOString().split('T')[0]!;
+  const last = progress.lastActiveDate;
+
+  if (!last) {
+    // First activity ever
+    progress.streakDays = 1;
+  } else if (last === today) {
+    // Already active today, no change
+  } else {
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    progress.streakDays = last === yesterday ? (progress.streakDays ?? 0) + 1 : 1;
+  }
+
+  progress.lastActiveDate = today;
+}
 
 // Mark a lesson as finished
 export async function markLessonComplete(lessonId: string) {
   const progress = await getProgress();
   if (!progress.completedLessonIds.includes(lessonId)) {
     progress.completedLessonIds.push(lessonId);
+    updateStreakInProgress(progress);
     await saveProgress(progress);
   }
   return progress;
@@ -110,6 +129,9 @@ export async function saveQuizResultDetailed(
 
 // Backward compatible basic saveQuizResult function
 export async function saveQuizResult(correctAnswers: number) {
+  const progress = await getProgress();
+  updateStreakInProgress(progress);
+  await saveProgress(progress);
   return saveQuizResultDetailed(undefined, 0, correctAnswers, []);
 }
 
