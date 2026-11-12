@@ -4,7 +4,7 @@ import { Colors, Spacing } from '@/constants/constants';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import type { QuizQuestion } from '@/types/lesson';
 
-export function MultipleChoice({ question, selected, onSelect }: { question: QuizQuestion; selected: string | null; onSelect: (answer: string) => void }) {
+export function MultipleChoice({ question, selected, onSelect }: { question: Extract<QuizQuestion, { type: 'multiple-choice' }>; selected: string | null; onSelect: (answer: string) => void }) {
   const scheme = useColorScheme();
   const palette = Colors[scheme === 'dark' ? 'dark' : 'light'];
   return <View style={styles.container}><Text style={[styles.prompt, { color: palette.text }]}>{question.prompt}</Text>{question.options.map((option) => <Pressable key={option} accessibilityRole="radio" accessibilityState={{ checked: selected === option }} onPress={() => onSelect(option)} style={[styles.option, { borderColor: selected === option ? palette.primary : palette.border }]}><Text style={{ color: palette.text }}>{option}</Text></Pressable>)}</View>;

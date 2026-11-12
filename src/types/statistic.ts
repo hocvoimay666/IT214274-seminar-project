@@ -42,8 +42,21 @@ export type LearningProgress = {
   averageScore?: number;
   quizHistory?: QuizAttempt[];
   wrongAnswers?: WrongAnswerRecord[];
+  practiceReviews?: Record<string, PracticeReviewProgress>;
   // Day-based streak
   streakDays: number;
   lastActiveDate?: string; // ISO date "YYYY-MM-DD"
 
+};
+
+export type PracticeReviewProgress = {
+  dueAtLessonCount: number;
+  gapIndex: number;
+  active: boolean;
+  completed: boolean;
+  firstPassQuestionIds: string[];
+  firstPassCorrect: number;
+  firstPassIncorrectIds: string[];
+  retryQuestionIds: string[];
+  retryCompletedIds: string[];
 };

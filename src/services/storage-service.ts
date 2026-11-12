@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { PROGRESS_STORAGE_KEY } from '@/constants/constants';
-import type { LearningProgress, QuizAttempt, WrongAnswerRecord } from '@/types/statistic';
+import type { LearningProgress, PracticeReviewProgress, QuizAttempt, WrongAnswerRecord } from '@/types/statistic';
 
 const EMPTY_PROGRESS: LearningProgress = { 
   completedLessonIds: [], 
@@ -11,6 +11,7 @@ const EMPTY_PROGRESS: LearningProgress = {
   averageScore: 0,
   quizHistory: [],
   wrongAnswers: [],
+  practiceReviews: {},
   streakDays: 0,
 };
 
@@ -51,12 +52,113 @@ function updateStreakInProgress(progress: LearningProgress) {
 // Mark a lesson as finished
 export async function markLessonComplete(lessonId: string) {
   const progress = await getProgress();
-  if (!progress.completedLessonIds.includes(lessonId)) {
+  const isNewCompletion = !progress.completedLessonIds.includes(lessonId);
+  if (isNewCompletion) {
     progress.completedLessonIds.push(lessonId);
     updateStreakInProgress(progress);
-    await saveProgress(progress);
   }
+  progress.practiceReviews ??= {};
+  if (!progress.practiceReviews[lessonId]) {
+    progress.practiceReviews[lessonId] = {
+      dueAtLessonCount: progress.completedLessonIds.length + 2,
+      gapIndex: 0,
+      active: false,
+      completed: false,
+      firstPassQuestionIds: [],
+      firstPassCorrect: 0,
+      firstPassIncorrectIds: [],
+      retryQuestionIds: [],
+      retryCompletedIds: [],
+    };
+  }
+  await saveProgress(progress);
   return progress;
+}
+
+const REVIEW_GAPS = [2, 4, 6];
+
+export async function getDuePracticeReviews() {
+  const progress = await getProgress();
+  const completedCount = progress.completedLessonIds.length;
+  const due: string[] = [];
+  for (const [lessonIndex, lessonId] of progress.completedLessonIds.entries()) {
+    progress.practiceReviews ??= {};
+    progress.practiceReviews[lessonId] ??= {
+      dueAtLessonCount: lessonIndex + 1 + REVIEW_GAPS[0]!,
+      gapIndex: 0,
+      active: false,
+      completed: false,
+      firstPassQuestionIds: [],
+      firstPassCorrect: 0,
+      firstPassIncorrectIds: [],
+      retryQuestionIds: [],
+      retryCompletedIds: [],
+    };
+    const review = progress.practiceReviews[lessonId];
+    if (review && (review.active || review.dueAtLessonCount <= completedCount)) {
+      if (!review.active) {
+        if (review.completed) {
+          review.firstPassQuestionIds = [];
+          review.firstPassCorrect = 0;
+          review.firstPassIncorrectIds = [];
+          review.retryQuestionIds = [];
+          review.retryCompletedIds = [];
+          review.completed = false;
+        }
+        review.active = true;
+      }
+      due.push(lessonId);
+    }
+  }
+  await saveProgress(progress);
+  return due;
+}
+
+export async function getPracticeReview(lessonId: string) {
+  const progress = await getProgress();
+  return progress.practiceReviews?.[lessonId] ?? null;
+}
+
+export async function recordPracticeAnswer(lessonId: string, questionId: string, correct: boolean, totalQuestions: number) {
+  const progress = await getProgress();
+  progress.practiceReviews ??= {};
+  const review = progress.practiceReviews[lessonId];
+  if (!review) return null;
+
+  if (review.retryQuestionIds.includes(questionId)) {
+    if (correct && !review.retryCompletedIds.includes(questionId)) review.retryCompletedIds.push(questionId);
+    const retriesDone = review.retryQuestionIds.every((id) => review.retryCompletedIds.includes(id));
+    if (retriesDone) finishPracticeReview(progress, lessonId, review);
+  } else if (!review.firstPassQuestionIds.includes(questionId)) {
+    review.firstPassQuestionIds.push(questionId);
+    if (correct) review.firstPassCorrect += 1;
+    else review.firstPassIncorrectIds.push(questionId);
+
+    if (review.firstPassQuestionIds.length >= totalQuestions) {
+      if (review.firstPassIncorrectIds.length >= Math.ceil(totalQuestions / 2)) {
+        review.retryQuestionIds = [...review.firstPassIncorrectIds];
+      } else {
+        finishPracticeReview(progress, lessonId, review);
+      }
+    }
+  }
+
+  await saveProgress(progress);
+  return review;
+}
+
+function finishPracticeReview(progress: LearningProgress, lessonId: string, review: PracticeReviewProgress) {
+  const nextGapIndex = review.gapIndex + 1;
+  review.gapIndex = nextGapIndex;
+  review.dueAtLessonCount = progress.completedLessonIds.length + REVIEW_GAPS[Math.min(nextGapIndex, REVIEW_GAPS.length - 1)]!;
+  review.active = false;
+  review.completed = true;
+  review.firstPassQuestionIds = [];
+  review.firstPassCorrect = 0;
+  review.firstPassIncorrectIds = [];
+  review.retryQuestionIds = [];
+  review.retryCompletedIds = [];
+  progress.practiceReviews![lessonId] = review;
 }
 
 // Save detailed quiz result, update statistics, history and wrong answers
