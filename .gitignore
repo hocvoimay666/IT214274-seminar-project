@@ -43,3 +43,8 @@ yarn-error.*
 
 # ide + text editor
 .vscode
+
+# Environment variables
+.env
+.env.*
+!.env.example
