@@ -15,13 +15,11 @@ export default function LearnScreen() {
   const theme = useTheme();
   const [streakCount, setStreakCount] = useState(0);
 
-  // Tự động kiểm tra tiến độ mỗi khi người dùng mở tab Learn
+  // Auto check progress in that day
   useFocusEffect(
     useCallback(() => {
       void getProgress().then((p) => {
-        // Biến count = Tổng số bài học đã hoàn thành + số bài quiz đã làm
-        const totalDone = p.completedLessonIds.length + p.completedQuizzes;
-        setStreakCount(totalDone);
+        setStreakCount(p.streakDays ?? 0);
       });
     }, [])
   );
@@ -43,7 +41,7 @@ export default function LearnScreen() {
         >
           <Ionicons
             name={hasStreak ? 'flame' : 'flame-outline'}
-            size={22}
+            size={28}
             color={hasStreak ? '#FF3B30' : (theme.muted as string)}
           />
           <Text
@@ -81,8 +79,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: Spacing.two,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(150, 150, 150, 0.15)', // Đường line mờ phân cách nhẹ
-    marginBottom: Spacing.two,
+    borderBottomColor: 'rgba(150, 150, 150, 0.15)',
   },
   logoText: {
     fontSize: 18,
@@ -102,6 +99,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   mainTitle: {
-    marginTop: Spacing.two, 
+    marginTop: Spacing.one, 
   },
 });
