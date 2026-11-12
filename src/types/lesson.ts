@@ -1,11 +1,11 @@
 import type { QuizQuestion } from '@/types/quiz';
 
-export type VocabularyWord = {
+export type Vocabulary = {
+  id: string;
   word: string;
   pronunciation: string;
   meaning: string;
-  example: string;
-  image?: string;
+  audioUrl?: string;
 };
 
 export type GrammarItem = {
@@ -19,7 +19,7 @@ export type Lesson = {
   title: string;
   level: string;
   description: string;
-  vocabulary: VocabularyWord[];
+  vocabulary: Vocabulary[];
   grammar?: GrammarItem[];
   questions: QuizQuestion[];
 };
