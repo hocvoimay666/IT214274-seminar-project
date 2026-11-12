@@ -1,13 +1,10 @@
 // Quiz and question models
-export type QuestionType = 'multiple-choice' | 'fill-blank';
+export type QuizQuestion =
+  | { id: string; prompt: string; type: 'multiple-choice'; options: string[]; answer: string }
+  | { id: string; prompt: string; type: 'fill-blank'; answer: string }
+  | { id: string; prompt: string; type: 'true-false'; answer: 'true' | 'false' };
 
-export type QuizQuestion = {
-  id: string;
-  prompt: string;
-  options: string[];
-  answer: string;
-  type?: QuestionType;
-};
+export type QuestionType = QuizQuestion['type'];
 
 export type QuizResult = {
   totalQuestions: number;
