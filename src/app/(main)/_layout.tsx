@@ -1,4 +1,4 @@
-import { Redirect } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 
 import AppTabs from '@/components/ui/app-tabs';
 import { useAuth } from '@/hooks/use-auth';
@@ -9,3 +9,4 @@ export default function MainLayout() {
   if (!user) return <Redirect href="/(auth)/login" />;
   return <AppTabs />;
 }
+
