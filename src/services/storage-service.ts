@@ -60,7 +60,7 @@ export async function markLessonComplete(lessonId: string) {
   progress.practiceReviews ??= {};
   if (!progress.practiceReviews[lessonId]) {
     progress.practiceReviews[lessonId] = {
-      dueAtLessonCount: progress.completedLessonIds.length + 2,
+      dueAtLessonCount: progress.completedLessonIds.length,
       gapIndex: 0,
       active: false,
       completed: false,
@@ -84,7 +84,7 @@ export async function getDuePracticeReviews() {
   for (const [lessonIndex, lessonId] of progress.completedLessonIds.entries()) {
     progress.practiceReviews ??= {};
     progress.practiceReviews[lessonId] ??= {
-      dueAtLessonCount: lessonIndex + 1 + REVIEW_GAPS[0]!,
+      dueAtLessonCount: lessonIndex + 1,
       gapIndex: 0,
       active: false,
       completed: false,
