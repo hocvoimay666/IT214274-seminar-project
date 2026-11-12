@@ -64,4 +64,7 @@ export type LearningProgress = {
 
   wrongAnswers?: WrongAnswerRecord[];
 
+  streakDays?: number;
+  
+  lastActiveDate?: string;
 };

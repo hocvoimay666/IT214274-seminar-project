@@ -10,6 +10,7 @@ const EMPTY_PROGRESS: LearningProgress = {
   averageScore: 0,
   quizHistory: [],
   wrongAnswers: [],
+  streakDays: 0,
 };
 
 // Read progress from device storage
