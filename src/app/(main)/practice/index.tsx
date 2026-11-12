@@ -14,11 +14,13 @@ export default function PracticeScreen() {
 
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleCheckAnswer = () => {
-    const isCorrect = selected === question.answer;
-    setResult(isCorrect ? 'That’s right!' : `Not quite. The answer is: ${question.answer}`);
-    void saveQuizResult(isCorrect ? 1 : 0);
+    const correct = selected === question.answer;
+    setIsCorrect(correct);
+    setResult(correct ? 'That\'s right!' : `Not quite. The answer is: ${question.answer}`);
+    void saveQuizResult(correct ? 1 : 0);
   };
 
   return (
@@ -28,7 +30,6 @@ export default function PracticeScreen() {
         Choose the best answer.
       </ThemedText>
 
-
       <MultipleChoice question={question} selected={selected} onSelect={setSelected} />
 
       <AppButton
@@ -37,7 +38,19 @@ export default function PracticeScreen() {
         onPress={handleCheckAnswer}
       />
 
-      {result && <Text accessibilityRole="alert">{result}</Text>}
+      {result && (
+        <Text
+          accessibilityRole="alert"
+          style={{
+            color: isCorrect ? '#27845A' : '#C43F45',
+            fontStyle: 'italic',
+            fontSize: 16,
+            fontWeight: '600',
+          }}
+        >
+          {result}
+        </Text>
+      )}
     </Screen>
   );
 }
